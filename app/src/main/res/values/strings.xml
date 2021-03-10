@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Broadcast Receivers and Permission</string>
+    <string name="open_airplane_mode_settings">Open Airplane Mode Settings</string>
 </resources>

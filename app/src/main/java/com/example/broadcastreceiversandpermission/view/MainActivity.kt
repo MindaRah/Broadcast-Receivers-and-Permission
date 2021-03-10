@@ -1,4 +1,4 @@
-package com.example.broadcastreceiversandpermission
+package com.example.broadcastreceiversandpermission.view
 
 import android.Manifest
 import android.content.BroadcastReceiver
@@ -8,16 +8,19 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings.ACTION_AIRPLANE_MODE_SETTINGS
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.example.broadcastreceiversandpermission.R
 import com.example.broadcastreceiversandpermission.receiver.AirPlaneModeReceiver
 import com.example.broadcastreceiversandpermission.util.Logger.Companion.logDebug
 import com.example.broadcastreceiversandpermission.util.WeatherCondition
-import com.example.broadcastreceiversandpermission.view.Weather
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AirPlaneModeReceiver.AirplaneDelegate {
 
-    private val airReceiver = AirPlaneModeReceiver()
+    private val airReceiver = AirPlaneModeReceiver(this)
 
     //Radio station for weather
     private val CUSTOM_FILTER = "106.8"
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+    //create button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,6 +60,12 @@ class MainActivity : AppCompatActivity() {
             //2nd Step; If permission is denied, request permissions
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 707)
         }
+
+        //Whenever you click the button - it's implicit intent
+        airplane_settings_button.setOnClickListener {
+            //Start activity
+            startActivity(Intent(ACTION_AIRPLANE_MODE_SETTINGS))
+        }
     }
 
     //3rd Step: Override OnRequestPermissionResult -> activity
@@ -78,5 +88,13 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         unregisterReceiver(airReceiver)
         unregisterReceiver(customReceiver)
+    }
+
+    override fun showButton() {
+        airplane_settings_button.visibility = View.VISIBLE
+    }
+
+    override fun hideButton() {
+        airplane_settings_button.visibility = View.GONE
     }
 }
